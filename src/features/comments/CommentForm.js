@@ -1,9 +1,9 @@
-import { useDispatch } from 'react-redux';
-import React, { useState } from 'react';
-import { Button, Modal, ModalHeader, ModalBody, FormGroup, Label } from 'reactstrap';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux'; 
 import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Button, Modal, ModalHeader, ModalBody, FormGroup, Label } from 'reactstrap';
 import { validateCommentForm } from '../../utils/validateCommentForm';
-import { addComment } from './commentsSlice';
+import { postComment } from '../../features/comments/commentsSlice'; 
 
 const CommentForm = ({ campsiteId }) => {
     const [modalOpen, setModalOpen] = useState(false);
@@ -11,14 +11,14 @@ const CommentForm = ({ campsiteId }) => {
 
     const handleSubmit = (values) => {
         const comment = {
-            campsiteId: parseInt(campsiteId),
+            campsiteId: parseInt(campsiteId, 10),
             rating: values.rating,
             author: values.author,
             text: values.commentText,
-            date: new Date(Date.now()).toISOString()
+            date: new Date().toISOString()
         };
         console.log(comment);
-        dispatch(addComment(comment));
+        dispatch(postComment(comment)); 
         setModalOpen(false);
     };
 
@@ -27,13 +27,13 @@ const CommentForm = ({ campsiteId }) => {
             <Button outline onClick={() => setModalOpen(true)}>
                 <i className='fa fa-pencil fa-lg' /> Add Comment
             </Button>
-            <Modal isOpen={modalOpen}>
+            <Modal isOpen={modalOpen} toggle={() => setModalOpen(false)}>
                 <ModalHeader toggle={() => setModalOpen(false)}>
                     Add Comment
                 </ModalHeader>
                 <ModalBody>
                     <Formik
-                        initialValues={{ rating: undefined, author: '', commentText: '' }}
+                        initialValues={{ rating: '', author: '', commentText: '' }}
                         onSubmit={handleSubmit}
                         validate={validateCommentForm}
                     >
@@ -45,12 +45,12 @@ const CommentForm = ({ campsiteId }) => {
                                     as="select"
                                     className="form-control"
                                 >
-                                    <option>Select...</option>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
+                                    <option value="">Select...</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
                                 </Field>
                                 <ErrorMessage name='rating'>
                                     {msg => <p className='text-danger'>{msg}</p>}
